@@ -13,7 +13,8 @@ const App = () => {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/job/:jobid" element={<Jobdetail />} />
-                <Route path="/addjob" element={<Addjob />} />
+                <Route path="/addjob" element={<Addjob heading={"Add"} />} />
+                <Route path="/editjob/:jobid" element={<Addjob heading={"Edit"} />} />
             </Routes>
         </BrowserRouter>
     );

@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import axios from "axios";
+import { authApi } from "../utils/axiosInstance";
 
 const Register = () => {
     const navigate = useNavigate();
@@ -21,14 +21,20 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const { data } = await axios.post("http://localhost:8000/api/v1/user/register", userInfo);
+            const data = await authApi("/user/register", userInfo);
             localStorage.setItem("job-token", JSON.stringify(data.token));
             localStorage.setItem("job-user", JSON.stringify(data.newUser));
             navigate("/");
         } catch (error) {
-            toast.error(error.response.data.message);
+            toast.error(error);
         }
     };
+
+    useEffect(() => {
+        if(localStorage.getItem('job-token')){
+            navigate('/')
+        }
+    },[navigate])
 
     return (
         <div className="flex items-center h-[100vh]">

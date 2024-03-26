@@ -1,6 +1,27 @@
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import Header from "../components/Header";
+import { getJobApi } from "../utils/axiosInstance";
 
 const Jobdetail = () => {
+    const { jobid } = useParams();
+    const [loading, setLoading] = useState(false);
+    const [data, setData] = useState([]);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        setLoading(true);
+        getJobApi(`/job/${jobid}`)
+            .then((res) => {
+                setLoading(false);
+                setData(res.job);
+            })
+            .catch((error) => {
+                setLoading(false);
+                setError(error);
+            });
+    }, [jobid]);
+
     return (
         <div className="bg-red-100 pb-5">
             <Header />
@@ -14,49 +35,38 @@ const Jobdetail = () => {
                     <div className="flex items-center gap-2 text-gray-400 my-2">
                         <div className="">1w ago</div>
                         <div className="h-1 w-1 rounded-full bg-gray-400"></div>
-                        <div className="">Full Time</div>
+                        <div className="">{data?.jobType}</div>
                     </div>
-                    <div className="text-2xl font-bold ">Wordpress Development</div>
-                    <div className="text-primaryRed font-semibold">Bangalore | India</div>
+                    <div className="text-2xl font-bold ">{data?.position}</div>
+                    <div className="text-primaryRed font-semibold">{data?.location} | India</div>
                     <div className="flex gap-5 mt-5 text-gray-400">
-                        <div className="w-28">Stipend</div>
+                        <div className="w-28">Salary</div>
                         <div className="">Duration</div>
                     </div>
                     <div className="flex gap-5">
-                        <div className="w-28">25000/month</div>
+                        <div className="w-28">{data?.salary} lpa</div>
                         <div className="">6 Months</div>
                     </div>
                     <div className="mt-10">
                         <div className="font-bold">About Company</div>
-                        <div className="my-5">
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae voluptatibus corporis
-                            excepturi! Maxime impedit officia fugit mollitia ducimus quae incidunt, voluptatibus nisi
-                            eum repellat porro error! Consequuntur asperiores doloribus aspernatur pariatur libero
-                            expedita voluptatibus facere adipisci velit! Assumenda perferendis placeat veniam
-                            cupiditate, omnis sequi voluptates asperiores, sit voluptate id distinctio quia corporis!
-                            Nesciunt cupiditate quam esse odit officia, earum repellendus, quis laborum magnam iste,
-                            architecto explicabo minus dicta optio est soluta quia maiores. Aperiam odit nemo eligendi
-                            dolorem corporis culpa possimus modi rem, fugiat beatae cumque minus iure debitis optio
-                            explicabo maiores eum numquam, doloribus amet sed, tempore alias perferendis?
-                        </div>
+                        <div className="my-5">{data?.aboutCompany} </div>
                     </div>
                     <div className="mt-10 font-bold">About the job/internship</div>
-                    <div className="my-5">
-                        Lorem ipsum, dolor sit amet consectetur adipisicing elit. A debitis velit aut exercitationem
-                        explicabo aspernatur, iusto ut minus voluptates eligendi itaque obcaecati neque numquam impedit
-                        unde, ea tenetur rem nulla similique qui. Laborum quisquam impedit architecto. Minima
-                        repellendus dignissimos debitis esse quibusdam ratione in quasi odit est sit eaque aut laborum
-                        illum obcaecati ex perspiciatis repudiandae dolorum earum consectetur, maxime, iusto,
-                        accusantium assumenda eos. Minima nisi quibusdam nesciunt tempore corporis accusamus tenetur.
-                        Voluptas cum mollitia deleniti autem nisi officiis fugiat nam amet impedit eveniet sapiente,
-                        modi rerum aut reiciendis facilis unde corporis atque veritatis dignissimos neque voluptates
-                        consequuntur. Rem, natus!
-                    </div>
+                    <div className="my-5">{data?.description}</div>
                     <div className="mt-10 font-bold">Skill(s) required</div>
                     <div className="flex flex-wrap gap-5 my-3">
-                        <div className="rounded-full bg-red-200 px-5">CSS</div>
-                        <div className="rounded-full bg-red-200 px-5">HTML</div>
-                        <div className="rounded-full bg-red-200 px-5">Wordpress</div>
+                        {data.skills &&
+                            data.skills.map((skill, idx) => (
+                                <div key={idx} className="rounded-full bg-red-200 px-5">
+                                    {skill}
+                                </div>
+                            ))}
+                        {/* {
+                            data?.skills[0]?.split(",").map((skill, idx) => (
+                                <div key={idx} className="rounded-full bg-red-200 px-5">
+                                    {skill}
+                                </div>
+                            ))} */}
                     </div>
                     <div className="mt-10 font-bold">Additional Information</div>
                     <div className="my-5">
