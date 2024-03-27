@@ -36,4 +36,19 @@ const postJobApi = async (url, payload) => {
     }
 };
 
-export { authApi, postJobApi, getJobApi };
+const updateJobApi = async (url, payload) => {
+    const token = JSON.parse(localStorage.getItem("job-token"));
+    try {
+        const { data } = await axios.patch(`http://localhost:8000/api/v1${url}`, payload, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return data;
+    } catch (error) {
+        if (!error.response) throw error.message;
+        throw error.response.data.message;
+    }
+};
+
+export { authApi, postJobApi, getJobApi, updateJobApi };

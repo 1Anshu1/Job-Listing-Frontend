@@ -1,23 +1,24 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { postJobApi } from "../utils/axiosInstance";
+import { postJobApi, getJobApi, updateJobApi } from "../utils/axiosInstance";
 
 const Addjob = ({ heading }) => {
+    const { state } = useLocation();
     const navigate = useNavigate();
     const { jobid } = useParams();
-
+    console.log(state);
     const [jobDetails, setJobDetails] = useState({
-        company: "",
-        logoUrl: "",
-        position: "",
-        salary: 0,
-        jobType: "",
-        workMode: "",
-        location: "",
-        description: "",
-        aboutCompany: "",
-        skills: "",
-        information: "",
+        company: state?.job?.company || "",
+        logoUrl: state?.job?.logoUrl || "",
+        position: state?.job?.position || "",
+        salary: state?.job?.salary || 0,
+        jobType: state?.job?.jobType || "",
+        workMode: state?.job?.workMode || "",
+        location: state?.job?.location || "",
+        description: state?.job?.description || "",
+        aboutCompany: state?.job?.aboutCompany || "",
+        skills: state?.job?.skills || "",
+        information: state?.job?.information || "",
     });
 
     const handleChange = (e) => {
@@ -26,22 +27,30 @@ const Addjob = ({ heading }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        postJobApi("/job/addjob", jobDetails)
-            .then((res) => console.log(res))
-            .catch((error) => console.log(error));
+        if (state.key === "edit") {
+            updateJobApi(`/job/${jobid}`, jobDetails)
+                .then((res) => console.log(res))
+                .catch((error) => console.log(error));
+        } else {
+            postJobApi("/job/addjob", jobDetails)
+                .then((res) => console.log(res))
+                .catch((error) => console.log(error));
+        }
     };
 
     useEffect(() => {
-        setLoading(true);
-        getJobApi(`/job/${jobid}`)
-            .then((res) => {
-                setLoading(false);
-                setData(res.job);
-            })
-            .catch((error) => {
-                setLoading(false);
-                setError(error);
-            });
+        if (location?.state?.key === "edit") {
+            setLoading(true);
+            getJobApi(`/job/${jobid}`)
+                .then((res) => {
+                    setLoading(false);
+                    setData(res.job);
+                })
+                .catch((error) => {
+                    setLoading(false);
+                    setError(error);
+                });
+        }
     }, [jobid]);
 
     return (
@@ -57,6 +66,7 @@ const Addjob = ({ heading }) => {
                             type="text"
                             id="name"
                             name="company"
+                            value={jobDetails?.company}
                             placeholder="Enter your company name here"
                             onChange={handleChange}
                             className="border-2 border-gray-400 w-full  rounded-md px-2 py-2 outline-none"
@@ -70,6 +80,7 @@ const Addjob = ({ heading }) => {
                             type="text"
                             id="logo"
                             name="logoUrl"
+                            value={jobDetails?.logoUrl}
                             placeholder="Enter the link"
                             onChange={handleChange}
                             className="border-2 border-gray-400 w-full  rounded-md px-2 py-2 outline-none"
@@ -83,6 +94,7 @@ const Addjob = ({ heading }) => {
                             type="text"
                             id="position"
                             name="position"
+                            value={jobDetails?.position}
                             placeholder="Enter job position"
                             onChange={handleChange}
                             className="border-2 border-gray-400 w-full  rounded-md px-2 py-2 outline-none"
@@ -96,6 +108,7 @@ const Addjob = ({ heading }) => {
                             type="number"
                             id="salary"
                             name="salary"
+                            value={jobDetails?.salary}
                             placeholder="Enter CTC in lakhs"
                             onChange={handleChange}
                             className="border-2 border-gray-400 w-full  rounded-md px-2 py-2 outline-none"
@@ -108,6 +121,7 @@ const Addjob = ({ heading }) => {
                         <select
                             name="jobType"
                             id="type"
+                            value={jobDetails?.jobType}
                             onChange={handleChange}
                             className="border-2 border-gray-400 w-full  rounded-md px-2 py-2 outline-none"
                         >
@@ -123,6 +137,7 @@ const Addjob = ({ heading }) => {
                         <select
                             name="workMode"
                             id="job-mode"
+                            value={jobDetails?.workMode}
                             onChange={handleChange}
                             className="border-2 border-gray-400 w-full  rounded-md px-2 py-2 outline-none"
                         >
@@ -139,6 +154,7 @@ const Addjob = ({ heading }) => {
                             type="text"
                             id="location"
                             name="location"
+                            value={jobDetails?.location}
                             placeholder="Enter Location"
                             onChange={handleChange}
                             className="border-2 border-gray-400 w-full  rounded-md px-2 py-2 outline-none"
@@ -152,6 +168,7 @@ const Addjob = ({ heading }) => {
                             type="text"
                             id="description"
                             name="description"
+                            value={jobDetails?.description}
                             placeholder="Type the job description"
                             onChange={handleChange}
                             className="border-2 border-gray-400 w-full h-20 resize-none overflow-hidden rounded-md px-2 py-2 outline-none"
@@ -165,6 +182,7 @@ const Addjob = ({ heading }) => {
                             type="text"
                             id="about"
                             name="aboutCompany"
+                            value={jobDetails?.aboutCompany}
                             placeholder="Type about your company"
                             onChange={handleChange}
                             className="border-2 border-gray-400 w-full h-20 resize-none overflow-hidden rounded-md px-2 py-2 outline-none"
@@ -178,6 +196,7 @@ const Addjob = ({ heading }) => {
                             type="text"
                             id="skills"
                             name="skills"
+                            value={jobDetails?.skills}
                             placeholder="Enter the skills comma separated"
                             onChange={handleChange}
                             className="border-2 border-gray-400 w-full  rounded-md px-2 py-2 outline-none"
@@ -191,6 +210,7 @@ const Addjob = ({ heading }) => {
                             type="text"
                             id="information"
                             name="information"
+                            value={jobDetails?.information}
                             placeholder="Enter the additional information"
                             onChange={handleChange}
                             className="border-2 border-gray-400 w-full  rounded-md px-2 py-2 outline-none"

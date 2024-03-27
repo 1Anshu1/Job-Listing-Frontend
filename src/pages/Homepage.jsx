@@ -22,6 +22,7 @@ const Homepage = () => {
 
     const handleClear = () => {
         setSkill([]);
+        setSearch("");
     };
 
     const handleSearch = async () => {
@@ -192,7 +193,9 @@ const Homepage = () => {
                                     JSON.parse(localStorage.getItem("job-user")).role === "employer" ? (
                                         <button
                                             className={`bg-primaryRed ml-3 px-5 py-1 rounded-md text-white `}
-                                            onClick={() => navigate(`/editjob/${job._id}`)}
+                                            onClick={() =>
+                                                navigate(`/editjob/${job._id}`, { state: { key: "edit", job } })
+                                            }
                                         >
                                             Edit
                                         </button>
